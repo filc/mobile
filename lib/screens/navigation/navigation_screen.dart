@@ -8,6 +8,7 @@ import 'package:filcnaplo_mobile_ui/screens/navigation/navigation_route_handler.
 import 'package:filcnaplo/icons/filc_icons.dart';
 import 'package:filcnaplo_mobile_ui/screens/news/news_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
@@ -134,7 +135,20 @@ class NavigationState extends State<Navigation> with WidgetsBindingObserver {
                 onTap: (index) {
                   // Vibrate, then set the active screen
                   if (selected.index != index) {
-                    if (settings.vibrate.index > 0) Vibration.vibrate(duration: 20 * settings.vibrate.index);
+                    if (settings.vibrate.index > 0) {
+                      switch (settings.vibrate) {
+                        case VibrationStrength.light:
+                          HapticFeedback.lightImpact();
+                          break;
+                        case VibrationStrength.medium:
+                          HapticFeedback.mediumImpact();
+                          break;
+                        case VibrationStrength.strong:
+                          HapticFeedback.heavyImpact();
+                          break;
+                        default:
+                      }
+                    }
                     setState(() => selected.index = index);
                     _navigatorState.currentState?.pushReplacementNamed(selected.name);
                   }

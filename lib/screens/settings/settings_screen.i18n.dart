@@ -37,6 +37,9 @@ extension SettingsLocalization on String {
           "done": "Done",
           "reset": "Reset",
           "open": "Open",
+          "data_collected": "Data collected: Platform (eg. Android), App version (eg. 3.0.0), Unique Install Identifier",
+          "Analytics": "Analytics",
+          "Anonymous Usage Analytics": "Anonymous Usage Analytics",
         },
         "hu_hu": {
           "personal_details": "Személyes információk",
@@ -72,6 +75,9 @@ extension SettingsLocalization on String {
           "done": "Kész",
           "reset": "Visszaállítás",
           "open": "Megnyitás",
+          "data_collected": "Gyűjtött adat: Platform (pl. Android), App verzió (pl. 3.0.0), Egyedi telepítési azonosító",
+          "Analytics": "Analitika",
+          "Anonymous Usage Analytics": "Névtelen használási analitika",
         },
         "de_de": {
           "personal_details": "Persönliche Angaben",
@@ -107,6 +113,9 @@ extension SettingsLocalization on String {
           "done": "Fertig",
           "reset": "Zurücksetzen",
           "open": "Öffnen",
+          "data_collected": "Erhobene Daten: Plattform (z.B. Android), App version (z.B. 3.0.0), Eindeutige Installationskennung",
+          "Analytics": "Analytik",
+          "Anonymous Usage Analytics": "Anonyme Nutzungsanalyse",
         },
       };
 

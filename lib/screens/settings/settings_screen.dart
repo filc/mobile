@@ -420,7 +420,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onPressed: () => showLicensePage(context: context),
                       ),
                       Tooltip(
-                        message: "Data collected: Platform (eg. Android), App version (eg. 3.0.0), Unique Install Identifier", // TODO: i18n
+                        message: "data_collected".i18n,
                         padding: EdgeInsets.all(4.0),
                         textStyle: TextStyle(fontWeight: FontWeight.w500, color: AppColors.of(context).text),
                         decoration: BoxDecoration(color: AppColors.of(context).highlight),
@@ -430,8 +430,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             contentPadding: EdgeInsets.only(left: 12.0),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                             secondary: Icon(FeatherIcons.barChart2, color: Theme.of(context).colorScheme.secondary),
-                            title: Text("Analtyics", style: TextStyle(fontWeight: FontWeight.w600)), // TODO: i18n
-                            subtitle: Text("Anonymous Usage Analytics"), // TODO: i18n
+                            title: Text("Analytics".i18n, style: TextStyle(fontWeight: FontWeight.w600)),
+                            subtitle: Text("Anonymous Usage Analytics".i18n),
                             onChanged: (v) {
                               String newId;
                               if (v == false)

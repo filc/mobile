@@ -419,6 +419,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text("licenses".i18n),
                         onPressed: () => showLicensePage(context: context),
                       ),
+                      Tooltip(
+                        message: "Data collected: Platform (eg. Android), App version (eg. 3.0.0), Unique Install Identifier", // TODO: i18n
+                        padding: EdgeInsets.all(4.0),
+                        textStyle: TextStyle(fontWeight: FontWeight.w500, color: AppColors.of(context).text),
+                        decoration: BoxDecoration(color: AppColors.of(context).highlight),
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: SwitchListTile(
+                            contentPadding: EdgeInsets.only(left: 12.0),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                            secondary: Icon(FeatherIcons.barChart2, color: Theme.of(context).colorScheme.secondary),
+                            title: Text("Analtyics", style: TextStyle(fontWeight: FontWeight.w600)), // TODO: i18n
+                            subtitle: Text("Anonymous Usage Analytics"), // TODO: i18n
+                            onChanged: (v) {
+                              String newId;
+                              if (v == false)
+                                newId = "none";
+                              else if (settings.xFilcId == "none")
+                                newId = SettingsProvider.defaultSettings().xFilcId;
+                              else
+                                newId = settings.xFilcId;
+                              settings.update(context, xFilcId: newId);
+                            },
+                            value: settings.xFilcId != "none",
+                            activeColor: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
                     ]),
                   ),
                 ),

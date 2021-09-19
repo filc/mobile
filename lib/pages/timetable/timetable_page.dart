@@ -58,7 +58,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     super.initState();
 
     // Initalize controllers
-    _controller = TimetableController(context: context);
+    _controller = TimetableController();
     _tabController = TabController(length: 0, vsync: this, initialIndex: 0);
 
     empty = Empty(subtitle: "empty".i18n);
@@ -164,7 +164,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                         InkWell(
                           borderRadius: BorderRadius.circular(6.0),
                           onTap: () => setState(() {
-                            _controller.current(context);
+                            _controller.current();
                             _controller.jump(_controller.currentWeek, context: context);
                           }),
                           child: Padding(

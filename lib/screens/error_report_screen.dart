@@ -7,6 +7,7 @@ import 'package:filcnaplo/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
+import 'error_report_screen.i18n.dart';
 
 class ErrorReportScreen extends StatelessWidget {
   final FlutterErrorDetails details;
@@ -35,7 +36,7 @@ class ErrorReportScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Text(
-                  "Uh Oh!", // TODO: i18n
+                  "uhoh".i18n,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32.0,
@@ -44,7 +45,7 @@ class ErrorReportScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                "error", // TODO: i18n
+                "description".i18n,
                 style: TextStyle(
                   color: Colors.white.withOpacity(.95),
                   fontSize: 24.0,
@@ -90,7 +91,7 @@ class ErrorReportScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    "Submit", // TODO: i18n
+                    "submit".i18n,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 17.0,
@@ -147,22 +148,21 @@ class StacktracePopup extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 10.0),
                     child: Text(
-                      "details", // TODO: i18n
+                      "details".i18n,
                       style: TextStyle(fontSize: 20.0),
                     ),
                   ),
                   ErrorDetail(
-                    "error", // TODO: i18n
+                    "error".i18n,
                     details.exceptionAsString(),
                   ),
-                  // TODO: i18n
-                  ErrorDetail("os", Platform.operatingSystem + " " + Platform.operatingSystemVersion),
-                  ErrorDetail("version", settings.packageInfo?.version ?? "?"),
-                  ErrorDetail("stack trace", stack.substring(0, min(stack.length, 5000)))
+                  ErrorDetail("os".i18n, Platform.operatingSystem + " " + Platform.operatingSystemVersion),
+                  ErrorDetail("version".i18n, settings.packageInfo?.version ?? "?"),
+                  ErrorDetail("stack".i18n, stack.substring(0, min(stack.length, 5000)))
                 ]),
               ),
               TextButton(
-                  child: Text("Done", style: TextStyle(color: Theme.of(context).colorScheme.secondary)), // TODO: i18n
+                  child: Text("done".i18n, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })

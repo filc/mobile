@@ -26,16 +26,26 @@ class PrivacyView extends StatelessWidget {
               ),
               SelectableLinkify(
                 text: """
-A Filc Napló egy kliensalkalmazás, segítségével az e-Kréta rendszeréből letöltheted és felhasználóbarát módon megjelenítheted az adataidat. Tanulmányi adataid csak közvetlenül az alkalmazás és a Kréta-szerverek között közlekednek, titkosított kapcsolaton keresztül.
-A Filc fejlesztői és üzemeltetői a tanulmányi adataidat semmilyen célból nem másolják, nem tárolják és harmadik félnek nem továbbítják. Ezeket így az e-Kréta Informatikai Zrt. kezeli, az ő tájékoztatójukat itt találod: https://tudasbazis.ekreta.hu/pages/viewpage.action?pageId=4065038. Azok törlésével vagy módosítával kapcsolatban keresd az osztályfőnöködet vagy az iskolád rendszergazdáját.
-Az alkalmazás néhány adat letöltéséhez (például: iskolalista, támogatók listája, konfiguráció) ugyan igénybe veszi a Filc Napló weboldalát (filcnaplo.hu), viszont oda nem tölt fel semmit.
+A Filc Napló egy kliensalkalmazás, segítségével az e-Kréta rendszeréből letöltheted és felhasználóbarát módon megjelenítheted az adataidat.
+Tanulmányi adataid csak közvetlenül az alkalmazás és a Kréta-szerverek között közlekednek, titkosított kapcsolaton keresztül.
+
+A Filc fejlesztői és üzemeltetői a tanulmányi adataidat semmilyen célból nem másolják, nem tárolják és harmadik félnek nem továbbítják. Ezeket így az e-Kréta Informatikai Zrt. kezeli, az ő tájékoztatójukat itt találod: https://tudasbazis.ekreta.hu/pages/viewpage.action?pageId=4065038.
+Azok törlésével vagy módosítával kapcsolatban keresd az osztályfőnöködet vagy az iskolád rendszergazdáját.
+
+Az alkalmazás névetelen használati statisztikákat gyűjt, ezek alapján tudjuk meghatározni a felhasználók és a telepítések számát. Ezt a beállításokban kikapcsolhatod.
+Kérünk, hogy ha csak teheted, hagyd ezt a funkciót bekapcsolva.
+
+Amikor az alkalmazás hibába ütközik, lehetőség van hibajelentés küldésére.
+Ez személyes- vagy tanulmányi adatokat nem tartalmaz, viszont részletes információval szolgál a hibáról és eszközödről.
+A küldés előtt megjelenő képernyőn a te felelősséged átnézni a továbbításra kerülő adatsort.
+A hibajelentéseket a Filc fejlesztői felületén és egy privát Discord szobában tároljuk, ezekhez csak az app fejlesztői férnek hozzá.
 Az alkalmazás belépéskor a GitHub API segítségével ellenőrzi, hogy elérhető-e új verzió, és kérésre innen is tölti le a telepítőt.
-Amikor az alkalmazás hibába ütközik, lehetőséged van egy erről szóló jelentést továbbítani a Filc Napló Discord szerverére. Ez személyes információt nem tartalmaz, viszont az app futásáról, eszközöd típusáról részletesen beszámol, ezért küldés előtt mindenképp nézd át a jelentés tartalmát. Ezt a küldés előtt megjelenő képernyőn teheted meg.
-A hibajelentésekhez csak a fejlesztők férnek hozzá (@DEV rangú felhasználók).
+
 Ha az adataiddal kapcsolatban bármilyen kérdésed van (törlés, módosítás, adathordozás), keress minket a filcnaplo@filcnaplo.hu címen.
+
 Az alkalmazás használatával jelzed, hogy ezt a tájékoztatót tudomásul vetted.
-Utolsó módosítás: 2021. 04. 19.
-A tájékoztató korábbi változatai: https://github.com/filc/filc.github.io/commits/master/docs/privacy
+
+Utolsó módosítás: 2021. 09. 25.
               """,
                 onOpen: (link) => launch(link.url,
                     customTabsOption: CustomTabsOption(

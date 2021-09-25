@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:animations/animations.dart';
 import 'package:filcnaplo_kreta_api/providers/timetable_provider.dart';
 import 'package:filcnaplo/api/providers/user_provider.dart';
 import 'package:filcnaplo/theme.dart';
@@ -70,7 +70,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
         _tabController = TabController(
             length: _controller.days!.length, vsync: this, initialIndex: min(_tabController.index, max(_controller.days!.length - 1, 0)));
 
-        _tabController.animateTo(_getDayIndex(DateTime.now()));
+        if (_controller.previousWeekId != _controller.currentWeekId) _tabController.animateTo(_getDayIndex(DateTime.now()));
 
         // Empty is updated once every week change
         empty = Empty(subtitle: "empty".i18n);
@@ -92,7 +92,15 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     super.dispose();
   }
 
-  String dayTitle(int index) => DateFormat("EEEE", I18n.of(context).locale.languageCode).format(_controller.days![index].first.date);
+  String dayTitle(int index) {
+    // Sometimes when changing weeks really fast,
+    // controller.days might be null or won't include index
+    try {
+      return DateFormat("EEEE", I18n.of(context).locale.languageCode).format(_controller.days![index].first.date);
+    } catch (e) {
+      return "timetable".i18n;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,16 +142,37 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                 ],
                 automaticallyImplyLeading: false,
                 // Current day text
-                title: (_controller.days?.length ?? 0) > 0
-                    ? DayTitle(controller: _tabController, dayTitle: dayTitle)
-                    : Text(
-                        "timetable".i18n,
-                        style: TextStyle(
-                          fontSize: 32.0,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.of(context).text,
+                title: PageTransitionSwitcher(
+                  reverse: _controller.currentWeekId < _controller.previousWeekId,
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> primaryAnimation,
+                    Animation<double> secondaryAnimation,
+                  ) {
+                    return SharedAxisTransition(
+                      animation: primaryAnimation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.horizontal,
+                      child: child,
+                      fillColor: AppColors.of(context).background,
+                    );
+                  },
+                  layoutBuilder: (List<Widget> entries) {
+                    return Stack(
+                      children: entries,
+                    );
+                  },
+                  child: (_controller.days?.length ?? 0) > 0
+                      ? DayTitle(controller: _tabController, dayTitle: dayTitle)
+                      : Text(
+                          "timetable".i18n,
+                          style: TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.of(context).text,
+                          ),
                         ),
-                      ),
+                ),
                 shadowColor: AppColors.of(context).shadow.withOpacity(0.5),
                 bottom: PreferredSize(
                   child: Padding(
@@ -153,9 +182,11 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                       children: [
                         // Previous week
                         IconButton(
-                            onPressed: () => setState(() {
-                                  _controller.previous(context);
-                                }),
+                            onPressed: _controller.currentWeekId == 0
+                                ? null
+                                : () => setState(() {
+                                      _controller.previous(context);
+                                    }),
                             splashRadius: 24.0,
                             icon: Icon(FeatherIcons.chevronLeft),
                             color: Theme.of(context).colorScheme.secondary),
@@ -165,7 +196,9 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                           borderRadius: BorderRadius.circular(6.0),
                           onTap: () => setState(() {
                             _controller.current();
-                            _controller.jump(_controller.currentWeek, context: context);
+
+                            _controller.jump(_controller.currentWeek,
+                                context: context, loader: _controller.currentWeekId != _controller.previousWeekId);
                           }),
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
@@ -193,9 +226,11 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
 
                         // Next week
                         IconButton(
-                            onPressed: () => setState(() {
-                                  _controller.next(context);
-                                }),
+                            onPressed: _controller.currentWeekId == 51
+                                ? null
+                                : () => setState(() {
+                                      _controller.next(context);
+                                    }),
                             splashRadius: 24.0,
                             icon: Icon(FeatherIcons.chevronRight),
                             color: Theme.of(context).colorScheme.secondary),
@@ -206,69 +241,82 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                 ),
               ),
             ],
-            body: _controller.days != null
-                ? Column(
-                    children: [
-                      // Week view
-                      _tabController.length > 0
-                          ? Expanded(
-                              child: TabBarView(
-                                physics: BouncingScrollPhysics(),
-                                controller: _tabController,
-                                // days
-                                children: List.generate(
-                                  _controller.days!.length,
-                                  (tab) => RefreshIndicator(
-                                    onRefresh: () => _controller.jump(_controller.currentWeek, context: context, loader: false),
-                                    color: Theme.of(context).colorScheme.secondary,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      physics: BouncingScrollPhysics(),
-                                      itemCount: _controller.days![tab].length + 2,
-                                      itemBuilder: (context, index) {
-                                        if (_controller.days == null) return Container();
+            body: PageTransitionSwitcher(
+              transitionBuilder: (
+                Widget child,
+                Animation<double> primaryAnimation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return FadeThroughTransition(
+                  child: child,
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  fillColor: AppColors.of(context).background,
+                );
+              },
+              child: _controller.days != null
+                  ? Column(
+                      children: [
+                        // Week view
+                        _tabController.length > 0
+                            ? Expanded(
+                                child: TabBarView(
+                                  physics: BouncingScrollPhysics(),
+                                  controller: _tabController,
+                                  // days
+                                  children: List.generate(
+                                    _controller.days!.length,
+                                    (tab) => RefreshIndicator(
+                                      onRefresh: () => _controller.jump(_controller.currentWeek, context: context, loader: false),
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      child: ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        physics: BouncingScrollPhysics(),
+                                        itemCount: _controller.days![tab].length + 2,
+                                        itemBuilder: (context, index) {
+                                          if (_controller.days == null) return Container();
 
-                                        // Header
-                                        if (index == 0)
+                                          // Header
+                                          if (index == 0)
+                                            return Padding(
+                                              padding: EdgeInsets.only(top: 8.0, left: 24.0, right: 24.0),
+                                              child: PanelHeader(padding: EdgeInsets.only(top: 12.0)),
+                                            );
+
+                                          // Footer
+                                          if (index == _controller.days![tab].length + 1)
+                                            return Padding(
+                                              padding: EdgeInsets.only(bottom: 8.0, left: 24.0, right: 24.0),
+                                              child: PanelFooter(padding: EdgeInsets.only(top: 12.0)),
+                                            );
+
+                                          // Body
+                                          final Lesson lesson = _controller.days![tab][index - 1];
+
                                           return Padding(
-                                            padding: EdgeInsets.only(top: 8.0, left: 24.0, right: 24.0),
-                                            child: PanelHeader(padding: EdgeInsets.only(top: 12.0)),
+                                            padding: EdgeInsets.symmetric(horizontal: 24.0),
+                                            child: PanelBody(
+                                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                              child: LessonTile(lesson, onTap: () {
+                                                if (!lesson.isEmpty) LessonView.show(lesson, context: context);
+                                              }),
+                                            ),
                                           );
-
-                                        // Footer
-                                        if (index == _controller.days![tab].length + 1)
-                                          return Padding(
-                                            padding: EdgeInsets.only(bottom: 8.0, left: 24.0, right: 24.0),
-                                            child: PanelFooter(padding: EdgeInsets.only(top: 12.0)),
-                                          );
-
-                                        // Body
-                                        final Lesson lesson = _controller.days![tab][index - 1];
-
-                                        return Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 24.0),
-                                          child: PanelBody(
-                                            padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                            child: LessonTile(lesson, onTap: () {
-                                              if (!lesson.isEmpty) LessonView.show(lesson, context: context);
-                                            }),
-                                          ),
-                                        );
-                                      },
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
+                              )
 
-                          // Empty week
-                          : Expanded(
-                              child: Container(
-                                child: Center(child: empty),
+                            // Empty week
+                            : Expanded(
+                                child: Container(
+                                  child: Center(child: empty),
+                                ),
                               ),
-                            ),
 
-                      /*
+                        /*
                        *  Please modify `flutter/lib/src/material/tabs.dart:1271` accordingly
                        *  
                        *  +  wrappedTabs[index] = Padding(
@@ -283,36 +331,39 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
                        *  
                        */
 
-                      // Day selector
-                      TabBar(
-                        controller: _tabController,
-                        // Label
-                        labelStyle: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w600),
-                        labelPadding: EdgeInsets.zero,
-                        labelColor: Theme.of(context).colorScheme.secondary,
-                        unselectedLabelColor: AppColors.of(context).text.withOpacity(0.9),
-                        // Indicator
-                        indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                        indicator: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
-                          borderRadius: BorderRadius.circular(8.0),
+                        // Day selector
+                        TabBar(
+                          controller: _tabController,
+                          // Label
+                          labelStyle: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w600),
+                          labelPadding: EdgeInsets.zero,
+                          labelColor: Theme.of(context).colorScheme.secondary,
+                          unselectedLabelColor: AppColors.of(context).text.withOpacity(0.9),
+                          // Indicator
+                          indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                          indicator: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          overlayColor: MaterialStateProperty.all(Color(0)),
+                          // Tabs
+                          padding: EdgeInsets.symmetric(vertical: 6.0),
+                          tabs: List.generate(_tabController.length, (index) {
+                            String label = DateFormat("E", I18n.of(context).locale.languageCode).format(_controller.days![index].first.date);
+                            return Tab(
+                              height: 36,
+                              text: label.substring(0, min(2, label.length)),
+                            );
+                          }),
                         ),
-                        overlayColor: MaterialStateProperty.all(Color(0)),
-                        // Tabs
-                        padding: EdgeInsets.symmetric(vertical: 6.0),
-                        tabs: List.generate(_tabController.length, (index) {
-                          String label = DateFormat("E", I18n.of(context).locale.languageCode).format(_controller.days![index].first.date);
-                          return Tab(
-                            height: 36,
-                            text: label.substring(0, min(2, label.length)),
-                          );
-                        }),
+                      ],
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                    ],
-                  )
-                : Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                    ),
+            ),
           ),
         ),
       ),

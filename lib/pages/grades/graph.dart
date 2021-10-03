@@ -33,8 +33,9 @@ class _GradeGraphState extends State<GradeGraph> {
 
     // Sort data to points by treshold
     data.forEach((element) {
-      if (sortedData.last.length != 0 && sortedData.last.last.writeDate.difference(element.writeDate).inDays > widget.dayThreshold)
-        sortedData.add([]);
+      if (sortedData.last.length != 0 &&
+          sortedData.last.last.writeDate.difference(element.writeDate).inDays >
+              widget.dayThreshold) sortedData.add([]);
       sortedData.forEach((dataList) {
         dataList.add(element);
       });
@@ -46,7 +47,9 @@ class _GradeGraphState extends State<GradeGraph> {
 
       if (dataList.length > 0) {
         subjectData.add(FlSpot(
-          dataList[0].writeDate.month + (dataList[0].writeDate.day / 31) + ((dataList[0].writeDate.year - data.first.writeDate.year) * 12),
+          dataList[0].writeDate.month +
+              (dataList[0].writeDate.day / 31) +
+              ((dataList[0].writeDate.year - data.first.writeDate.year) * 12),
           double.parse(average.toStringAsFixed(2)),
         ));
       }
@@ -71,26 +74,37 @@ class _GradeGraphState extends State<GradeGraph> {
         .toList();
 
     // Filter ghost data
-    List<Grade> ghostData = widget.data.where((e) => e.value.weight != 0).where((e) => e.type == GradeType.ghost).toList();
+    List<Grade> ghostData = widget.data
+        .where((e) => e.value.weight != 0)
+        .where((e) => e.type == GradeType.ghost)
+        .toList();
 
     // Calculate average
     double average = AverageHelper.averageEvals(data);
 
     // Calculate graph color
     Color averageColor = average >= 1 && average <= 5
-        ? ColorTween(begin: settings.gradeColors[average.floor() - 1], end: settings.gradeColors[average.ceil() - 1])
+        ? ColorTween(
+                begin: settings.gradeColors[average.floor() - 1],
+                end: settings.gradeColors[average.ceil() - 1])
             .transform(average - average.floor())!
         : Theme.of(context).colorScheme.secondary;
 
     subjectSpots = getSpots(data);
     ghostSpots = getSpots(data + ghostData);
-    ghostSpots = ghostSpots.where((e) => e.x >= subjectSpots.map((f) => f.x).reduce(max)).toList();
+    ghostSpots = ghostSpots
+        .where((e) => e.x >= subjectSpots.map((f) => f.x).reduce(max))
+        .toList();
 
-    Grade halfYearGrade = widget.data.lastWhere((e) => e.type == GradeType.halfYear, orElse: () => Grade.fromJson({}));
+    Grade halfYearGrade = widget.data.lastWhere(
+        (e) => e.type == GradeType.halfYear,
+        orElse: () => Grade.fromJson({}));
 
     if (halfYearGrade.date.year != 0 && data.length > 0)
       extraLines.add(VerticalLine(
-          x: halfYearGrade.date.month + (halfYearGrade.date.day / 31) + ((halfYearGrade.date.year - data.first.writeDate.year) * 12),
+          x: halfYearGrade.date.month +
+              (halfYearGrade.date.day / 31) +
+              ((halfYearGrade.date.year - data.first.writeDate.year) * 12),
           strokeWidth: 3.0,
           color: AppColors.of(context).text.withOpacity(.75),
           label: VerticalLineLabel(
@@ -102,15 +116,6 @@ class _GradeGraphState extends State<GradeGraph> {
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
               ))));
-
-    double titleInterval;
-
-    if (data.length > 0) {
-      titleInterval = data.first.date.difference(data.last.date).inDays / 31 * 0.2;
-      if (titleInterval == 0) titleInterval = 1.0;
-    } else {
-      titleInterval = 1.0;
-    }
 
     return Container(
       child: subjectSpots.length > 0
@@ -219,12 +224,15 @@ class _GradeGraphState extends State<GradeGraph> {
                       fontWeight: FontWeight.bold,
                       fontSize: 14.0,
                     ),
-                    interval: titleInterval,
+                    interval: null, // It automatically figures it out.
                     margin: 12.0,
                     getTitles: (value) {
-                      var format = DateFormat("MMM", I18n.of(context).locale.toString());
+                      var format =
+                          DateFormat("MMM", I18n.of(context).locale.toString());
 
-                      String title = format.format(DateTime(0, value.floor() % 12)).replaceAll(".", "");
+                      String title = format
+                          .format(DateTime(0, value.floor() % 12))
+                          .replaceAll(".", "");
                       title = title.substring(0, min(title.length, 4));
 
                       return title.toUpperCase();

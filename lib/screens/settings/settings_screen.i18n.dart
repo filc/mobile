@@ -66,7 +66,7 @@ extension SettingsLocalization on String {
           "about": "Névjegy",
           "supporters": "Támogatók",
           "privacy": "Adatvédelmi irányelvek",
-          "licenses": "Licenszek",
+          "licenses": "Licencek",
           "vibrate": "Rezgés",
           "voff": "Kikapcsolás",
           "vlight": "Alacsony",

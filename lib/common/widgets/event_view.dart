@@ -1,7 +1,7 @@
 import 'package:filcnaplo/theme.dart';
 import 'package:filcnaplo_kreta_api/models/event.dart';
-import 'package:filcnaplo_mobile_ui/common/bottom_card.dart';
 import 'package:filcnaplo/utils/format.dart';
+import 'package:filcnaplo_mobile_ui/common/sliding_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -11,7 +11,7 @@ class EventView extends StatelessWidget {
 
   final Event event;
 
-  static void show(Event event, {required BuildContext context}) => showBottomCard(context: context, child: EventView(event));
+  static void show(Event event, {required BuildContext context}) => showSlidingBottomSheet(context: context, child: EventView(event));
 
   @override
   Widget build(BuildContext context) {

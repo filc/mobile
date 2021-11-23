@@ -1,9 +1,9 @@
 import 'package:filcnaplo/theme.dart';
 import 'package:filcnaplo/utils/color.dart';
 import 'package:filcnaplo_kreta_api/models/note.dart';
-import 'package:filcnaplo_mobile_ui/common/bottom_card.dart';
 import 'package:filcnaplo_mobile_ui/common/profile_image/profile_image.dart';
 import 'package:filcnaplo/utils/format.dart';
+import 'package:filcnaplo_mobile_ui/common/sliding_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -13,7 +13,7 @@ class NoteView extends StatelessWidget {
 
   final Note note;
 
-  static void show(Note note, {required BuildContext context}) => showBottomCard(context: context, child: NoteView(note));
+  static void show(Note note, {required BuildContext context}) => showSlidingBottomSheet(context: context, child: NoteView(note));
 
   @override
   Widget build(BuildContext context) {

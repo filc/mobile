@@ -1,9 +1,9 @@
 import 'package:filcnaplo/helpers/subject_icon.dart';
 import 'package:filcnaplo/theme.dart';
 import 'package:filcnaplo_kreta_api/models/homework.dart';
-import 'package:filcnaplo_mobile_ui/common/bottom_card.dart';
 import 'package:filcnaplo/utils/format.dart';
 import 'package:filcnaplo_mobile_ui/common/detail.dart';
+import 'package:filcnaplo_mobile_ui/common/sliding_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -17,7 +17,7 @@ class HomeworkView extends StatelessWidget {
   final Homework homework;
 
   static show(Homework homework, {required BuildContext context}) {
-    showBottomCard(context: context, child: HomeworkView(homework));
+    showSlidingBottomSheet(context: context, child: HomeworkView(homework));
   }
 
   @override

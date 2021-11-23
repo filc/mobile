@@ -100,6 +100,7 @@ class MessageViewTile extends StatelessWidget {
             padding: EdgeInsets.all(12.0),
             child: SelectableLinkify(
               text: message.content.escapeHtml(),
+              options: const LinkifyOptions(looseUrl: true, removeWww: true),
               onOpen: (link) {
                 launch(link.url,
                     customTabsOption: CustomTabsOption(

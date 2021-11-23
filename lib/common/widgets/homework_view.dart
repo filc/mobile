@@ -65,6 +65,7 @@ class HomeworkView extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 6.0),
             child: SelectableLinkify(
               text: homework.content.escapeHtml(),
+              options: const LinkifyOptions(looseUrl: true, removeWww: true),
               onOpen: (link) {
                 launch(link.url,
                     customTabsOption: CustomTabsOption(

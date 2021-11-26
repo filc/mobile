@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:animations/animations.dart';
 import 'package:filcnaplo_kreta_api/models/week.dart';
@@ -49,6 +50,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
   late String firstName;
   late TimetableController _controller;
   late TabController _tabController;
+  late Timer _refreshTimer; 
   late Widget empty;
 
   int _getDayIndex(DateTime date) {
@@ -102,6 +104,11 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     // Listen for user changes
     user = Provider.of<UserProvider>(context, listen: false);
     user.addListener(_userListener);
+
+    // Refresh the timetable every hour
+    _refreshTimer = Timer.periodic(Duration(hours: 1), (timer) =>
+      _controller.jump(_controller.currentWeek, context: context)
+    );
   }
 
   @override
@@ -109,6 +116,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     _tabController.dispose();
     _controller.dispose();
     user.removeListener(_userListener);
+    _refreshTimer.cancel();
     super.dispose();
   }
 

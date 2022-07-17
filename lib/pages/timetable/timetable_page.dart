@@ -55,7 +55,8 @@ class TimetablePage extends StatefulWidget {
   _TimetablePageState createState() => _TimetablePageState();
 }
 
-class _TimetablePageState extends State<TimetablePage> with TickerProviderStateMixin {
+class _TimetablePageState extends State<TimetablePage>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late UserProvider user;
   late TimetableProvider timetableProvider;
   late UpdateProvider updateProvider;
@@ -79,6 +80,14 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
   Future<void> _userListener() async {
     await Provider.of<KretaClient>(context, listen: false).refreshLogin();
     _controller.jump(_controller.currentWeek, context: context);
+  }
+
+  // When the app comes to foreground, refresh the timetable
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _controller.jump(_controller.currentWeek, context: context);
+    }
   }
 
   @override
@@ -122,6 +131,9 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     // Listen for user changes
     user = Provider.of<UserProvider>(context, listen: false);
     user.addListener(_userListener);
+
+    // Register listening for app state changes to refresh the timetable 
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   @override
@@ -129,6 +141,7 @@ class _TimetablePageState extends State<TimetablePage> with TickerProviderStateM
     _tabController.dispose();
     _controller.dispose();
     user.removeListener(_userListener);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
